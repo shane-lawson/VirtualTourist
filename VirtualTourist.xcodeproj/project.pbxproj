@@ -103,13 +103,29 @@
 		347A3561245D1238009E2903 /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				347A355D245D11DD009E2903 /* FlickrAPI.swift */,
+				34F6F63424609F2F004C3E5E /* FlickrAPI */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		34F6F63324609F24004C3E5E /* Responses */ = {
+			isa = PBXGroup;
+			children = (
 				34F6F62D24607B55004C3E5E /* ErrorResponse.swift */,
 				34F6F629246076CB004C3E5E /* PhotoResponse.swift */,
 				34F6F62B24607A47004C3E5E /* PhotosResponse.swift */,
 				34F6F631246096F1004C3E5E /* PhotosSearchResponse.swift */,
 			);
-			path = Model;
+			path = Responses;
+			sourceTree = "<group>";
+		};
+		34F6F63424609F2F004C3E5E /* FlickrAPI */ = {
+			isa = PBXGroup;
+			children = (
+				347A355D245D11DD009E2903 /* FlickrAPI.swift */,
+				34F6F63324609F24004C3E5E /* Responses */,
+			);
+			path = FlickrAPI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
