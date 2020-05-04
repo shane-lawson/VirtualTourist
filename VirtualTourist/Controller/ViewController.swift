@@ -43,10 +43,21 @@ class ViewController: UIViewController {
    }
    
    @objc func dropPin(_ sender: UILongPressGestureRecognizer) {
-      let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
-      let pin = MKPointAnnotation()
-      pin.coordinate = pinCoord
-      mapView.addAnnotation(pin)
+      switch sender.state {
+//      case .possible:
+//      case .began:
+//      case .changed:
+      case .ended:
+         let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
+         let pin = MKPointAnnotation()
+         pin.coordinate = pinCoord
+         mapView.addAnnotation(pin)
+         mapView.setCenter(pin.coordinate, animated: true)
+//      case .cancelled:
+//      case .failed:
+      default:
+         break
+      }
    }
 }
 
@@ -70,6 +81,5 @@ extension ViewController: UICollectionViewDataSource {
          return UIImage(systemName: "photo.fill")!
       }
    }
-   
    
 }
