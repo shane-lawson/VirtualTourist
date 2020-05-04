@@ -22,15 +22,19 @@ class ViewController: UIViewController {
       // Do any additional setup after loading the view.
       
       mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(dropPin(_:))))
-      
-      FlickrAPI.searchForPhotos(at: (lat: 43.5, long: -96.7)) { (photoLocations, error) in
+
+      collectionView.dataSource = self
+      collectionView.isHidden = true
+   }
+   
+   func getPhotos(at location: CLLocationCoordinate2D) {
+      FlickrAPI.searchForPhotos(at: (lat: location.latitude, long: location.longitude)) { (photoLocations, error) in
          guard error == nil else { print(error!); return }
          self.photoLocations = photoLocations
          photoLocations.forEach {
             FlickrAPI.downloadPhoto($0, completionHandler: self.handlePhotoDownload(data:error:))
          }
       }
-      collectionView.dataSource = self
    }
    
    func handlePhotoDownload(data: Data?, error: Error?) {
@@ -53,6 +57,8 @@ class ViewController: UIViewController {
          pin.coordinate = pinCoord
          mapView.addAnnotation(pin)
          mapView.setCenter(pin.coordinate, animated: true)
+         getPhotos(at: pin.coordinate)
+         collectionView.isHidden = false
 //      case .cancelled:
 //      case .failed:
       default:

@@ -11,7 +11,7 @@ import Foundation
 class FlickrAPI {
    enum Endpoints {
       case base
-      case search(Float, Float)
+      case search(Double, Double)
       case source(PhotoResponse)
       
       var stringValue: String {
@@ -46,7 +46,7 @@ class FlickrAPI {
       }()
    }
    
-   class func searchForPhotos(at location: (lat: Float, long: Float), completionHandler: @escaping ([PhotoResponse], Error?) -> Void) {
+   class func searchForPhotos(at location: (lat: Double, long: Double), completionHandler: @escaping ([PhotoResponse], Error?) -> Void) {
       let request = URLRequest(url: Endpoints.search(location.lat, location.long).url)
       URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
          guard let data = data else {
