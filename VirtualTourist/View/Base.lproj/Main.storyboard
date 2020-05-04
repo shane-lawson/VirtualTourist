@@ -17,7 +17,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ant-Iw-ul5">
-                                <rect key="frame" x="0.0" y="44" width="414" height="818"/>
+                                <rect key="frame" x="0.0" y="383" width="414" height="479"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3K2-NE-icN">
                                     <size key="itemSize" width="128" height="128"/>
@@ -50,18 +50,29 @@
                                     </collectionViewCell>
                                 </cells>
                             </collectionView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="F6R-1i-T5i">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="375"/>
+                                <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="375" id="Ran-jR-o40"/>
+                                </constraints>
+                            </mapView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
-                            <constraint firstItem="ant-Iw-ul5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Lml-2S-5Oq"/>
-                            <constraint firstItem="ant-Iw-ul5" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="dRR-et-7RB"/>
-                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="ant-Iw-ul5" secondAttribute="trailing" id="hSC-ea-A7X"/>
-                            <constraint firstItem="ant-Iw-ul5" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="pce-31-1lP"/>
+                            <constraint firstItem="F6R-1i-T5i" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="0hg-2H-znv"/>
+                            <constraint firstItem="F6R-1i-T5i" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="3jr-h6-WdS"/>
+                            <constraint firstItem="ant-Iw-ul5" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="NHY-sn-gxx"/>
+                            <constraint firstItem="F6R-1i-T5i" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="cHT-gH-egU"/>
+                            <constraint firstItem="ant-Iw-ul5" firstAttribute="top" secondItem="F6R-1i-T5i" secondAttribute="bottom" constant="8" id="dAW-Pp-iuE"/>
+                            <constraint firstItem="ant-Iw-ul5" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="mdb-iw-uke"/>
+                            <constraint firstItem="ant-Iw-ul5" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="qyz-NW-n46"/>
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
                         <outlet property="collectionView" destination="ant-Iw-ul5" id="KY1-Xc-Ifr"/>
+                        <outlet property="mapView" destination="F6R-1i-T5i" id="kUi-KB-dfq"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>

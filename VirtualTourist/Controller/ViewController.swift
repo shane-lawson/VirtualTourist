@@ -7,9 +7,11 @@
 //
 
 import UIKit
+import MapKit
 
-class ViewController: UIViewController, UICollectionViewDataSource {
+class ViewController: UIViewController {
 
+   @IBOutlet weak var mapView: MKMapView!
    @IBOutlet weak var collectionView: UICollectionView!
    
    var photoLocations: [PhotoResponse]!
@@ -18,6 +20,8 @@ class ViewController: UIViewController, UICollectionViewDataSource {
    override func viewDidLoad() {
       super.viewDidLoad()
       // Do any additional setup after loading the view.
+      
+      mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(dropPin(_:))))
       
       FlickrAPI.searchForPhotos(at: (lat: 43.5, long: -96.7)) { (photoLocations, error) in
          guard error == nil else { print(error!); return }
@@ -37,11 +41,18 @@ class ViewController: UIViewController, UICollectionViewDataSource {
          collectionView.reloadData()
       }
    }
+   
+   @objc func dropPin(_ sender: UILongPressGestureRecognizer) {
+      let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
+      let pin = MKPointAnnotation()
+      pin.coordinate = pinCoord
+      mapView.addAnnotation(pin)
+   }
 }
 
 // MARK: - UICollectionViewDataSource
 
-extension ViewController {
+extension ViewController: UICollectionViewDataSource {
    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
       return 30
    }
