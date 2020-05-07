@@ -17,7 +17,7 @@ class MapWithCollectionViewDetailViewController: UIViewController {
    
    var photoLocations: [PhotoResponse]!
    var photos = [UIImage]()
-   var location: MKPointAnnotation!
+   var location: MKAnnotation!
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -31,6 +31,7 @@ class MapWithCollectionViewDetailViewController: UIViewController {
       collectionView.dataSource = self
       collectionView.delegate = self
    }
+   
    
    @IBAction func newCollectionTapped(_ sender: UIBarButtonItem) {
       getPhotos(at: location.coordinate)

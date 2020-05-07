@@ -14,7 +14,7 @@ class MapViewController: UIViewController {
    @IBOutlet weak var mapView: MKMapView!
    
    var locations = [MKPointAnnotation]()
-   var selectedLocation: MKPointAnnotation!
+   var selectedLocation: MKAnnotation!
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -52,16 +52,12 @@ class MapViewController: UIViewController {
    
 
    @objc func dropPin(_ sender: UILongPressGestureRecognizer) {
-      switch sender.state {
-      case .began:
-         let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
-         let pin = MKPointAnnotation()
-         pin.coordinate = pinCoord
-         locations.append(pin)
-         mapView.addAnnotation(pin)
-      default:
-         break
-      }
+      guard sender.state == .began else { return }
+      let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
+      let pin = MKPointAnnotation()
+      pin.coordinate = pinCoord
+      locations.append(pin)
+      mapView.addAnnotation(pin)
    }
 }
 
@@ -74,7 +70,7 @@ extension MapViewController: MKMapViewDelegate {
    }
    
    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-      selectedLocation = view.annotation as? MKPointAnnotation
+      selectedLocation = view.annotation
       performSegue(withIdentifier: "showCollection", sender: self)
    }
    
