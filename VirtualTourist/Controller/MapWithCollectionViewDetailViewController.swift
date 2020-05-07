@@ -1,5 +1,5 @@
 //
-//  ViewController.swift
+//  MapWithCollectionViewDetailViewController.swift
 //  VirtualTourist
 //
 //  Created by Shane Lawson on 4/30/20.
@@ -9,7 +9,7 @@
 import UIKit
 import MapKit
 
-class ViewController: UIViewController {
+class MapWithCollectionViewDetailViewController: UIViewController {
 
    @IBOutlet weak var mapView: MKMapView!
    @IBOutlet weak var collectionView: UICollectionView!
@@ -76,7 +76,7 @@ class ViewController: UIViewController {
 
 // MARK: - UICollectionViewDataSource
 
-extension ViewController: UICollectionViewDataSource {
+extension MapWithCollectionViewDetailViewController: UICollectionViewDataSource {
    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
       return 30
    }
@@ -99,7 +99,7 @@ extension ViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 
-extension ViewController: UICollectionViewDelegate {
+extension MapWithCollectionViewDetailViewController: UICollectionViewDelegate {
    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
       photos.remove(at: indexPath.item)
       collectionView.scrollsToTop = false
@@ -114,7 +114,7 @@ extension ViewController: UICollectionViewDelegate {
 
 // MARK: - MKMapViewDelegate
 
-extension ViewController: MKMapViewDelegate {
+extension MapWithCollectionViewDetailViewController: MKMapViewDelegate {
    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
       VTUserDefaults.region = mapView.region
    }
