@@ -11,15 +11,15 @@ import Foundation
 class FlickrAPI {
    enum Endpoints {
       case base
-      case search(Double, Double)
+      case search(Double, Double, Int, Int)
       case source(PhotoResponse)
       
       var stringValue: String {
          switch self {
          case .base:
             return ""
-         case .search(let lat, let long):
-            return "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Auth.key)&lat=\(lat)&lon=\(long)&geo_context=2&per_page=30&format=json&nojsoncallback=1"
+         case .search(let lat, let long, let number, let page):
+            return "https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=\(Auth.key)&lat=\(lat)&lon=\(long)&geo_context=2&per_page=\(number)&page=\(page)&format=json&nojsoncallback=1"
          case .source(let photo):
             return "https://farm\(photo.farm).staticflickr.com/\(photo.server)/\(photo.id)_\(photo.secret)_q.jpg"
          }
@@ -47,7 +47,7 @@ class FlickrAPI {
    }
    
    class func searchForPhotos(at location: (lat: Double, long: Double), completionHandler: @escaping ([PhotoResponse], Error?) -> Void) {
-      let request = URLRequest(url: Endpoints.search(location.lat, location.long).url)
+      let request = URLRequest(url: Endpoints.search(location.lat, location.long, 30, 1).url)
       URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
          guard let data = data else {
             completionHandler([], error)
@@ -63,7 +63,49 @@ class FlickrAPI {
                let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
                completionHandler([], errorResponse)
             } catch {
-               completionHandler([],error)
+               completionHandler([], error)
+            }
+         }
+      }).resume()
+   }
+   
+   class func searchForRandomPhoto(at location: (lat: Double, long: Double), completionHandler: @escaping (PhotoResponse?, Error?) -> Void) {
+      let request = URLRequest(url: Endpoints.search(location.lat, location.long, 1, 1).url)
+      URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+         guard let data = data else {
+            completionHandler(nil, error)
+            return
+         }
+         
+         do {
+            let responseObject = try JSONDecoder().decode(PhotosSearchResponse.self, from: data)
+            let randomPage = Int.random(in: 1...responseObject.photos.pages)
+            let request = URLRequest(url: Endpoints.search(location.lat, location.long, 1, randomPage).url)
+            URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
+               guard let data = data else {
+                  completionHandler(nil, error)
+                  return
+               }
+               
+               do {
+                  let responseObject = try JSONDecoder().decode(PhotosSearchResponse.self, from: data)
+                  let photo = responseObject.photos.photo.first!
+                  completionHandler(photo, nil)
+               } catch {
+                  do {
+                     let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
+                     completionHandler(nil, errorResponse)
+                  } catch {
+                     completionHandler(nil, error)
+                  }
+               }
+            }).resume()
+         } catch {
+            do {
+               let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
+               completionHandler(nil, errorResponse)
+            } catch {
+               completionHandler(nil, error)
             }
          }
       }).resume()

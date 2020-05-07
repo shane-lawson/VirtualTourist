@@ -16,6 +16,7 @@ class ViewController: UIViewController {
    
    var photoLocations: [PhotoResponse]!
    var photos = [UIImage]()
+   var selectedLocation: MKPointAnnotation!
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -24,7 +25,7 @@ class ViewController: UIViewController {
       mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(dropPin(_:))))
 
       collectionView.dataSource = self
-      collectionView.isHidden = true
+      collectionView.delegate = self
    }
    
    func getPhotos(at location: CLLocationCoordinate2D) {
@@ -73,7 +74,7 @@ extension ViewController: UICollectionViewDataSource {
    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
       return 30
    }
-
+   
    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCollectionViewCell
       cell.imageView.image = image(at: indexPath)
@@ -88,4 +89,20 @@ extension ViewController: UICollectionViewDataSource {
       }
    }
    
+}
+
+// MARK: - UICollectionViewDelegate
+
+
+extension ViewController: UICollectionViewDelegate {
+   func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+      photos.remove(at: indexPath.item)
+      collectionView.scrollsToTop = false
+      collectionView.deleteItems(at: [indexPath])
+      
+      FlickrAPI.searchForRandomPhoto(at: (lat: selectedLocation.coordinate.latitude, long: selectedLocation.coordinate.longitude)) { (photolocation, error) in
+         guard let photolocation = photolocation else {print(error!); return }
+         FlickrAPI.downloadPhoto(photolocation, completionHandler: self.handlePhotoDownload(data:error:))
+      }
+   }
 }
