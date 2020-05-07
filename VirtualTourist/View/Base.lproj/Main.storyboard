@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16096" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BCI-of-Z40">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16086"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
@@ -12,15 +13,12 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="MapWithCollectionViewDetailViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <collectionView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" dataMode="prototypes" translatesAutoresizingMaskIntoConstraints="NO" id="ant-Iw-ul5">
-                                <rect key="frame" x="0.0" y="121" width="600" height="479"/>
+                                <rect key="frame" x="0.0" y="296" width="414" height="566"/>
                                 <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="479" id="PLP-Po-0HZ"/>
-                                </constraints>
                                 <collectionViewFlowLayout key="collectionViewLayout" automaticEstimatedItemSize="YES" minimumLineSpacing="10" minimumInteritemSpacing="10" id="3K2-NE-icN">
                                     <size key="itemSize" width="128" height="128"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
@@ -53,15 +51,31 @@
                                 </cells>
                             </collectionView>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="F6R-1i-T5i">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="113"/>
+                                <rect key="frame" x="0.0" y="88" width="414" height="200"/>
                                 <gestureRecognizers/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="200" id="odh-at-54K"/>
+                                </constraints>
                             </mapView>
+                            <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZuG-Hy-mFC">
+                                <rect key="frame" x="0.0" y="818" width="414" height="44"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMinY="YES"/>
+                                <items>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="Coz-Ye-6TJ"/>
+                                    <barButtonItem title="New Collection" id="SmT-sE-PGU">
+                                        <connections>
+                                            <action selector="newCollectionTapped:" destination="BYZ-38-t0r" id="FUf-ZB-g7Z"/>
+                                        </connections>
+                                    </barButtonItem>
+                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="XHs-Wa-2Mf"/>
+                                </items>
+                            </toolbar>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
                         <constraints>
                             <constraint firstItem="F6R-1i-T5i" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="0hg-2H-znv"/>
-                            <constraint firstItem="F6R-1i-T5i" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="3jr-h6-WdS"/>
                             <constraint firstItem="ant-Iw-ul5" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="NHY-sn-gxx"/>
+                            <constraint firstItem="F6R-1i-T5i" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="Son-SH-vfz"/>
                             <constraint firstItem="F6R-1i-T5i" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="cHT-gH-egU"/>
                             <constraint firstItem="ant-Iw-ul5" firstAttribute="top" secondItem="F6R-1i-T5i" secondAttribute="bottom" constant="8" id="dAW-Pp-iuE"/>
                             <constraint firstItem="ant-Iw-ul5" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="mdb-iw-uke"/>
@@ -69,14 +83,63 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <navigationItem key="navigationItem" id="itV-Z6-gIl"/>
                     <connections>
                         <outlet property="collectionView" destination="ant-Iw-ul5" id="KY1-Xc-Ifr"/>
                         <outlet property="mapView" destination="F6R-1i-T5i" id="kUi-KB-dfq"/>
+                        <outlet property="newCollectionButton" destination="SmT-sE-PGU" id="E1X-4K-VxN"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="137.68115942028987" y="109.82142857142857"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="STb-zS-oEN">
+            <objects>
+                <navigationController id="BCI-of-Z40" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="0Mc-97-Cp5">
+                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="s6G-sY-Bd2" kind="relationship" relationship="rootViewController" id="TDd-JZ-WXJ"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vVJ-48-rtJ" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1520" y="110"/>
+        </scene>
+        <!--Map View Controller-->
+        <scene sceneID="nz1-va-8cc">
+            <objects>
+                <viewController id="s6G-sY-Bd2" customClass="MapViewController" customModule="VirtualTourist" customModuleProvider="target" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Pzv-uL-Jnz">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="zpS-5d-JDN">
+                                <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                            </mapView>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="zpS-5d-JDN" firstAttribute="trailing" secondItem="2vo-Hr-aya" secondAttribute="trailing" id="5c3-Du-VGV"/>
+                            <constraint firstItem="zpS-5d-JDN" firstAttribute="top" secondItem="Pzv-uL-Jnz" secondAttribute="top" id="Kr6-RL-AUX"/>
+                            <constraint firstItem="zpS-5d-JDN" firstAttribute="leading" secondItem="2vo-Hr-aya" secondAttribute="leading" id="NQ9-JH-tg6"/>
+                            <constraint firstAttribute="bottom" secondItem="zpS-5d-JDN" secondAttribute="bottom" id="sqN-MU-cXD"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="2vo-Hr-aya"/>
+                    </view>
+                    <navigationItem key="navigationItem" id="Fxv-NP-Lju"/>
+                    <connections>
+                        <outlet property="mapView" destination="zpS-5d-JDN" id="b9c-Hx-xk4"/>
+                        <segue destination="BYZ-38-t0r" kind="show" identifier="showCollection" id="IcB-fc-JUe"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Gt7-fn-xm1" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-678.26086956521749" y="109.82142857142857"/>
         </scene>
     </scenes>
 </document>

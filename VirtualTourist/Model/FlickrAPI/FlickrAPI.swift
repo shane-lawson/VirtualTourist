@@ -47,6 +47,7 @@ class FlickrAPI {
    }
    
    class func searchForPhotos(at location: (lat: Double, long: Double), completionHandler: @escaping ([PhotoResponse], Error?) -> Void) {
+      // TODO: make random page of photos
       let request = URLRequest(url: Endpoints.search(location.lat, location.long, 30, 1).url)
       URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
          guard let data = data else {
