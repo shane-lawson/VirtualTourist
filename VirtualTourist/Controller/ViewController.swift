@@ -23,7 +23,13 @@ class ViewController: UIViewController {
       // Do any additional setup after loading the view.
       
       mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(dropPin(_:))))
-
+      
+      // check if is not initialised value, load map region from UserDefaults
+      if VTUserDefaults.latitudeDelta != 0.0 {
+         mapView.region = VTUserDefaults.region
+      }
+      
+      mapView.delegate = self
       collectionView.dataSource = self
       collectionView.delegate = self
    }
@@ -93,7 +99,6 @@ extension ViewController: UICollectionViewDataSource {
 
 // MARK: - UICollectionViewDelegate
 
-
 extension ViewController: UICollectionViewDelegate {
    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
       photos.remove(at: indexPath.item)
@@ -104,5 +109,13 @@ extension ViewController: UICollectionViewDelegate {
          guard let photolocation = photolocation else {print(error!); return }
          FlickrAPI.downloadPhoto(photolocation, completionHandler: self.handlePhotoDownload(data:error:))
       }
+   }
+}
+
+// MARK: - MKMapViewDelegate
+
+extension ViewController: MKMapViewDelegate {
+   func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+      VTUserDefaults.region = mapView.region
    }
 }
