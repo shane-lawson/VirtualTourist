@@ -50,16 +50,16 @@ class ViewController: UIViewController {
    @objc func dropPin(_ sender: UILongPressGestureRecognizer) {
       switch sender.state {
 //      case .possible:
-//      case .began:
-//      case .changed:
-      case .ended:
+      case .began:
          let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
          let pin = MKPointAnnotation()
          pin.coordinate = pinCoord
-         mapView.addAnnotation(pin)
-         mapView.setCenter(pin.coordinate, animated: true)
-         getPhotos(at: pin.coordinate)
-         collectionView.isHidden = false
+         selectedLocation = pin
+         mapView.addAnnotation(selectedLocation)
+         mapView.setCenter(selectedLocation.coordinate, animated: true)
+         getPhotos(at: selectedLocation.coordinate)
+//      case .changed:
+//      case .ended:
 //      case .cancelled:
 //      case .failed:
       default:
