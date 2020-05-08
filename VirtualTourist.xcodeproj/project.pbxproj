@@ -10,6 +10,8 @@
 		343EA1D324645F06004D88D9 /* VTUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343EA1D224645F06004D88D9 /* VTUserDefaults.swift */; };
 		343EA1D5246472C3004D88D9 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343EA1D4246472C3004D88D9 /* MapViewController.swift */; };
 		343EA1D824648F48004D88D9 /* VirtualTourist.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 343EA1D624648F48004D88D9 /* VirtualTourist.xcdatamodeld */; };
+		343EA1DA24649D7E004D88D9 /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343EA1D924649D7E004D88D9 /* DataController.swift */; };
+		343EA1DD2464A95A004D88D9 /* Pin+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 343EA1DC2464A95A004D88D9 /* Pin+Extensions.swift */; };
 		347A3548245B9B6F009E2903 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A3547245B9B6F009E2903 /* AppDelegate.swift */; };
 		347A354A245B9B6F009E2903 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A3549245B9B6F009E2903 /* SceneDelegate.swift */; };
 		347A354C245B9B6F009E2903 /* MapWithCollectionViewDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 347A354B245B9B6F009E2903 /* MapWithCollectionViewDetailViewController.swift */; };
@@ -29,6 +31,8 @@
 		343EA1D224645F06004D88D9 /* VTUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VTUserDefaults.swift; sourceTree = "<group>"; };
 		343EA1D4246472C3004D88D9 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
 		343EA1D724648F48004D88D9 /* VirtualTourist.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = VirtualTourist.xcdatamodel; sourceTree = "<group>"; };
+		343EA1D924649D7E004D88D9 /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
+		343EA1DC2464A95A004D88D9 /* Pin+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Pin+Extensions.swift"; sourceTree = "<group>"; };
 		347A3544245B9B6F009E2903 /* VirtualTourist.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VirtualTourist.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		347A3547245B9B6F009E2903 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		347A3549245B9B6F009E2903 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -57,6 +61,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		343EA1DB2464A937004D88D9 /* Managed Object Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				343EA1DC2464A95A004D88D9 /* Pin+Extensions.swift */,
+			);
+			path = "Managed Object Extensions";
+			sourceTree = "<group>";
+		};
 		347A353B245B9B6F009E2903 = {
 			isa = PBXGroup;
 			children = (
@@ -110,7 +122,9 @@
 		347A3561245D1238009E2903 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				343EA1DB2464A937004D88D9 /* Managed Object Extensions */,
 				343EA1D624648F48004D88D9 /* VirtualTourist.xcdatamodeld */,
+				343EA1D924649D7E004D88D9 /* DataController.swift */,
 				34F6F63424609F2F004C3E5E /* FlickrAPI */,
 				343EA1D224645F06004D88D9 /* VTUserDefaults.swift */,
 			);
@@ -218,7 +232,9 @@
 				347A3548245B9B6F009E2903 /* AppDelegate.swift in Sources */,
 				343EA1D5246472C3004D88D9 /* MapViewController.swift in Sources */,
 				343EA1D824648F48004D88D9 /* VirtualTourist.xcdatamodeld in Sources */,
+				343EA1DD2464A95A004D88D9 /* Pin+Extensions.swift in Sources */,
 				34F6F62C24607A47004C3E5E /* PhotosResponse.swift in Sources */,
+				343EA1DA24649D7E004D88D9 /* DataController.swift in Sources */,
 				347A354A245B9B6F009E2903 /* SceneDelegate.swift in Sources */,
 				347A355E245D11DD009E2903 /* FlickrAPI.swift in Sources */,
 			);

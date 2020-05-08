@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class MapViewController: UIViewController {
 
@@ -16,17 +17,20 @@ class MapViewController: UIViewController {
    var locations = [MKPointAnnotation]()
    var selectedLocation: MKAnnotation!
    
+   var dataController: DataController!
+   
    override func viewDidLoad() {
       super.viewDidLoad()
       
+      mapView.delegate = self
       mapView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(dropPin(_:))))
-
+      
       // check if is not initialised value, load map region from UserDefaults
       if VTUserDefaults.latitudeDelta != 0.0 {
          mapView.region = VTUserDefaults.region
       }
-
-      mapView.delegate = self
+      
+      performFetch()
    }
 
    override func viewWillAppear(_ animated: Bool) {
@@ -53,11 +57,30 @@ class MapViewController: UIViewController {
 
    @objc func dropPin(_ sender: UILongPressGestureRecognizer) {
       guard sender.state == .began else { return }
-      let pinCoord = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
-      let pin = MKPointAnnotation()
-      pin.coordinate = pinCoord
-      locations.append(pin)
-      mapView.addAnnotation(pin)
+      let coordinate = mapView.convert(sender.location(in: mapView), toCoordinateFrom: mapView)
+      mapView.addAnnotation(createPointAnnotation(coordinate: coordinate))
+      savePin(coordinate: coordinate)
+   }
+   
+   fileprivate func createPointAnnotation(coordinate: CLLocationCoordinate2D) -> MKPointAnnotation {
+      let annotation = MKPointAnnotation()
+      annotation.coordinate = coordinate
+      return annotation
+   }
+   
+   fileprivate func savePin(coordinate: CLLocationCoordinate2D) {
+      let pin = Pin(context: dataController.viewContext)
+      pin.coordinate = coordinate
+      try? dataController.viewContext.save()
+   }
+   
+   fileprivate func performFetch() {
+      let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
+      if let result = try? dataController.viewContext.fetch(fetchRequest) {
+         let annotations = result.map { createPointAnnotation(coordinate: $0.coordinate) }
+         mapView.removeAnnotations(mapView.annotations)
+         mapView.addAnnotations(annotations)
+      }
    }
 }
 
