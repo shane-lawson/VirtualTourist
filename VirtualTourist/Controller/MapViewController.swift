@@ -14,8 +14,8 @@ class MapViewController: UIViewController {
 
    @IBOutlet weak var mapView: MKMapView!
    
-   var locations = [MKPointAnnotation]()
-   var selectedLocation: MKAnnotation!
+   var pins: [Pin]!
+   var selectedLocation: Pin!
    
    var dataController: DataController!
    
@@ -47,7 +47,8 @@ class MapViewController: UIViewController {
       switch segue.identifier {
       case "showCollection":
          let destinationVC = segue.destination as! MapWithCollectionViewDetailViewController
-         destinationVC.location = selectedLocation
+         destinationVC.pin = selectedLocation
+         destinationVC.dataController = dataController
       default:
          print("prepare(for:) not implemented for segue \(segue.identifier!)")
          break
@@ -71,12 +72,14 @@ class MapViewController: UIViewController {
    fileprivate func savePin(coordinate: CLLocationCoordinate2D) {
       let pin = Pin(context: dataController.viewContext)
       pin.coordinate = coordinate
+      pins.append(pin)
       try? dataController.viewContext.save()
    }
    
    fileprivate func performFetch() {
       let fetchRequest: NSFetchRequest<Pin> = Pin.fetchRequest()
       if let result = try? dataController.viewContext.fetch(fetchRequest) {
+         pins = result
          let annotations = result.map { createPointAnnotation(coordinate: $0.coordinate) }
          mapView.removeAnnotations(mapView.annotations)
          mapView.addAnnotations(annotations)
@@ -93,7 +96,8 @@ extension MapViewController: MKMapViewDelegate {
    }
    
    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
-      selectedLocation = view.annotation
+      selectedLocation = pins.filter({ $0.coordinate.latitude == view.annotation?.coordinate.latitude && $0.coordinate.longitude == view.annotation?.coordinate.longitude }).first
+      assert(selectedLocation != nil)
       performSegue(withIdentifier: "showCollection", sender: self)
    }
    

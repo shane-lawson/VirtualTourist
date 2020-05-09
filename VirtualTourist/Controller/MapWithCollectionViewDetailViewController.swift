@@ -8,33 +8,47 @@
 
 import UIKit
 import MapKit
+import CoreData
 
-class MapWithCollectionViewDetailViewController: UIViewController {
+class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResultsControllerDelegate {
 
    @IBOutlet weak var mapView: MKMapView!
    @IBOutlet weak var collectionView: UICollectionView!
    @IBOutlet weak var newCollectionButton: UIBarButtonItem!
    
    var photoLocations: [PhotoResponse]!
-   var photos = [UIImage]()
-   var location: MKAnnotation!
+   var pin: Pin!
+   
+   var dataController: DataController!
+   var fetchedResultsController: NSFetchedResultsController<Photos>!
    
    override func viewDidLoad() {
       super.viewDidLoad()
       
-      getPhotos(at: location.coordinate)
+      getPhotos(at: pin.coordinate)
       
-      mapView.region = MKCoordinateRegion(center: location.coordinate, latitudinalMeters: CLLocationDistance(exactly: 2000)!, longitudinalMeters: CLLocationDistance(exactly: 2000)!)
-      mapView.addAnnotation(location)
+      mapView.region = MKCoordinateRegion(center: pin.coordinate, latitudinalMeters: CLLocationDistance(exactly: 2000)!, longitudinalMeters: CLLocationDistance(exactly: 2000)!)
+      let annotation = MKPointAnnotation()
+      annotation.coordinate = pin.coordinate
+      mapView.addAnnotation(annotation)
       mapView.delegate = self
       
       collectionView.dataSource = self
       collectionView.delegate = self
    }
    
+   override func viewWillAppear(_ animated: Bool) {
+      super.viewWillAppear(animated)
+      setupFetchedResultsController()
+   }
+   
+   override func viewDidDisappear(_ animated: Bool) {
+      super.viewDidDisappear(animated)
+      fetchedResultsController = nil
+   }
    
    @IBAction func newCollectionTapped(_ sender: UIBarButtonItem) {
-      getPhotos(at: location.coordinate)
+      getPhotos(at: pin.coordinate)
    }
    
    fileprivate func getPhotos(at location: CLLocationCoordinate2D) {
@@ -51,9 +65,10 @@ class MapWithCollectionViewDetailViewController: UIViewController {
    fileprivate func handlePhotoDownload(data: Data?, error: Error?) {
       guard let data = data else { print(error!); return }
       if let image = UIImage(data: data) {
-         photos.append(image)
-//         collectionView.reloadItems(at: [IndexPath(item: photos.endIndex, section: 0)])
-         collectionView.reloadData()
+         if let photos = performFetch() {
+            photos.first(where: {$0.isPlaceholderImage})?.image = image
+            try! dataController.viewContext.save()
+         }
       }
       setLoadingNewCollection(false)
    }
@@ -61,44 +76,99 @@ class MapWithCollectionViewDetailViewController: UIViewController {
    fileprivate func setLoadingNewCollection(_ loading: Bool) {
       newCollectionButton.isEnabled = !loading
    }
+   
+   fileprivate func setupFetchedResultsController() {
+      fetchedResultsController = NSFetchedResultsController(fetchRequest: createFetchRequest(), managedObjectContext: dataController.viewContext, sectionNameKeyPath: nil, cacheName: "\(pin.coordinate)")
+      fetchedResultsController.delegate = self
+      do {
+         try fetchedResultsController.performFetch()
+      } catch {
+         fatalError("The fetch could not be performed: \(error.localizedDescription)")
+      }
+   }
+   
+   fileprivate func performFetch() -> [Photos]? {
+      return try! dataController.viewContext.fetch(createFetchRequest())
+   }
+   
+   fileprivate func createFetchRequest() -> NSFetchRequest<Photos> {
+      let fetchRequest: NSFetchRequest<Photos> = Photos.fetchRequest()
+      let predicate = NSPredicate(format: "pin == %@", pin)
+      fetchRequest.predicate = predicate
+      let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
+      fetchRequest.sortDescriptors = [sortDescriptor]
+      return fetchRequest
+   }
+   
+   // MARK: - NSFetchedResultsControllerDelegate
+   
+   private var blockOperations = [BlockOperation]()
+   
+   func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+      
+      switch type {
+      case .insert:
+         blockOperations.append(BlockOperation { [unowned self] in
+            self.collectionView.insertItems(at: [newIndexPath!])
+         })
+      case .delete:
+         blockOperations.append(BlockOperation { [unowned self] in
+            self.collectionView.deleteItems(at: [indexPath!])
+         })
+      case .update:
+         blockOperations.append(BlockOperation { [unowned self] in
+            self.collectionView.reloadItems(at: [indexPath!])
+         })
+      case .move:
+         fallthrough
+      @unknown default:
+         fatalError("Invalid change type in controller(_:didChange:atSectionIndex:for:). Only .insert or .delete should be possible.")
+      }
+   }
+   
+   func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+      blockOperations.removeAll()
+   }
+   
+   func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
+      collectionView.performBatchUpdates({
+         blockOperations.forEach { $0.start() }
+      }, completion: nil)
+   }
 }
 
 // MARK: - UICollectionViewDataSource
 
 extension MapWithCollectionViewDetailViewController: UICollectionViewDataSource {
+   
+   func numberOfSections(in collectionView: UICollectionView) -> Int {
+      return fetchedResultsController.sections?.count ?? 1
+   }
+   
    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-      return 30
+      return fetchedResultsController.sections?[section].numberOfObjects ?? 0
    }
    
    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+      let photo = fetchedResultsController.object(at: indexPath)
       let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "photoCell", for: indexPath) as! PhotoCollectionViewCell
-      cell.imageView.image = image(at: indexPath)
+      cell.imageView.image = UIImage(data: photo.imageData!)
       return cell
    }
-   
-   func image(at indexPath: IndexPath) -> UIImage {
-      if indexPath.item < photos.count {
-         return photos[indexPath.item]
-      } else {
-         return UIImage(systemName: "photo.fill")!
-      }
-   }
-   
 }
 
 // MARK: - UICollectionViewDelegate
 
 extension MapWithCollectionViewDetailViewController: UICollectionViewDelegate {
    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-      photos.remove(at: indexPath.item)
-      collectionView.scrollsToTop = false
-      collectionView.performBatchUpdates({
-         collectionView.deleteItems(at: [indexPath])
-         collectionView.insertItems(at: [IndexPath(item: 29, section: 0)])
-      }, completion: nil)
-
+      let photo = fetchedResultsController.object(at: indexPath)
+      dataController.viewContext.delete(photo)
+      let newPhoto = Photos(context: dataController.viewContext)
+      pin.addToPhotos(newPhoto)
+      try! dataController.viewContext.save()
+      
       // TODO: fix random photo mostly selecting same photo
-      FlickrAPI.searchForRandomPhoto(at: (lat: location.coordinate.latitude, long: location.coordinate.longitude)) { (photolocation, error) in
+      FlickrAPI.searchForRandomPhoto(at: (lat: pin.coordinate.latitude, long: pin.coordinate.longitude)) { (photolocation, error) in
          guard let photolocation = photolocation else {print(error!); return }
          FlickrAPI.downloadPhoto(photolocation, completionHandler: self.handlePhotoDownload(data:error:))
       }

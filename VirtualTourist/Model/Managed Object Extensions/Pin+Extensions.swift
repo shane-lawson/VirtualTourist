@@ -20,4 +20,10 @@ extension Pin {
          self.longitude = newCoordinate.longitude
       }
    }
+   
+   public override func awakeFromInsert() {
+      for _ in 0..<30 {
+         self.addToPhotos(Photos(context: self.managedObjectContext!))
+      }
+   }
 }

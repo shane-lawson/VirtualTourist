@@ -120,7 +120,7 @@ class FlickrAPI {
             return
          }
          
-         DispatchQueue.main.async {
+         DispatchQueue.main.sync {
             completionHandler(data, nil)
          }
       }).resume()
