@@ -16,7 +16,6 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    @IBOutlet weak var collectionView: UICollectionView!
    @IBOutlet weak var newCollectionButton: UIBarButtonItem!
    
-   var photoLocations: [PhotoResponse]!
    var pin: Pin!
    
    var dataController: DataController!
@@ -53,11 +52,14 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    
    fileprivate func getPhotos(at location: CLLocationCoordinate2D) {
       setLoadingNewCollection(true)
-      FlickrAPI.searchForPhotos(at: (lat: location.latitude, long: location.longitude)) { (photoLocations, error) in
+      FlickrAPI.searchForPhotos(at: (lat: location.latitude, long: location.longitude)) { [unowned self] (photoLocations, error) in
          guard error == nil else { print(error!); return }
-         self.photoLocations = photoLocations
          photoLocations.forEach {
             FlickrAPI.downloadPhoto($0, completionHandler: self.handlePhotoDownload(data:error:))
+         }
+         if photoLocations.count < 30 {
+            let photos = self.performFetch(offset: photoLocations.count)
+            photos?.forEach { self.dataController.viewContext.delete($0) }
          }
       }
    }
@@ -87,16 +89,19 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
       }
    }
    
-   fileprivate func performFetch() -> [Photos]? {
-      return try! dataController.viewContext.fetch(createFetchRequest())
+   fileprivate func performFetch(offset: Int? = nil) -> [Photos]? {
+      return try! dataController.viewContext.fetch(createFetchRequest(offset))
    }
    
-   fileprivate func createFetchRequest() -> NSFetchRequest<Photos> {
+   fileprivate func createFetchRequest(_ offset: Int? = nil) -> NSFetchRequest<Photos> {
       let fetchRequest: NSFetchRequest<Photos> = Photos.fetchRequest()
       let predicate = NSPredicate(format: "pin == %@", pin)
       fetchRequest.predicate = predicate
       let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
       fetchRequest.sortDescriptors = [sortDescriptor]
+      if let offset = offset {
+         fetchRequest.fetchOffset = offset
+      }
       return fetchRequest
    }
    

@@ -97,7 +97,6 @@ extension MapViewController: MKMapViewDelegate {
    
    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
       selectedLocation = pins.filter({ $0.coordinate.latitude == view.annotation?.coordinate.latitude && $0.coordinate.longitude == view.annotation?.coordinate.longitude }).first
-      assert(selectedLocation != nil)
       performSegue(withIdentifier: "showCollection", sender: self)
    }
    
