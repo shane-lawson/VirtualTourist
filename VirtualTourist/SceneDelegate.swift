@@ -20,12 +20,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
       // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
       guard let _ = (scene as? UIWindowScene) else { return }
       
+      // load dataController and inject into root view controller
       dataController.load()
       
       let navigationController = window?.rootViewController as! UINavigationController
       let mapViewController = navigationController.topViewController as! MapViewController
       mapViewController.dataController = dataController
-
    }
 
    func sceneDidDisconnect(_ scene: UIScene) {

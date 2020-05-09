@@ -11,6 +11,7 @@ import CoreData
 import MapKit
 
 extension Pin {
+   // construct a coordinate from lat and long on get and save coordinate components to lat and long on set
    var coordinate: CLLocationCoordinate2D {
       get {
          return CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
@@ -22,6 +23,7 @@ extension Pin {
    }
    
    public override func awakeFromInsert() {
+      // create 30 photos for the collection and add to pin
       for _ in 0..<30 {
          self.addToPhotos(Photo(context: self.managedObjectContext!))
       }

@@ -12,12 +12,19 @@ import CoreData
 
 class MapViewController: UIViewController {
 
+   // MARK: IBOutlets
+   
    @IBOutlet weak var mapView: MKMapView!
+   
+   // MARK: Properties
    
    var pins: [Pin]!
    var selectedLocation: Pin!
    
+   // injected dataController
    var dataController: DataController!
+   
+   // MARK: Lifecycle Overrides
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -43,9 +50,12 @@ class MapViewController: UIViewController {
       navigationController?.navigationBar.isHidden = false
    }
    
+   // MARK: Navigation
+   
    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
       switch segue.identifier {
       case "showCollection":
+         // inject pin and dataController to ViewController
          let destinationVC = segue.destination as! MapWithCollectionViewDetailViewController
          destinationVC.pin = selectedLocation
          destinationVC.dataController = dataController
@@ -55,6 +65,7 @@ class MapViewController: UIViewController {
       }
    }
    
+   // MARK: Helpers
 
    @objc func dropPin(_ sender: UILongPressGestureRecognizer) {
       guard sender.state == .began else { return }
@@ -92,10 +103,12 @@ class MapViewController: UIViewController {
 extension MapViewController: MKMapViewDelegate {
    
    func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+      // save map zoom and position to UserDefaults
       VTUserDefaults.region = mapView.region
    }
    
    func mapView(_ mapView: MKMapView, didSelect view: MKAnnotationView) {
+      // find which pin was tapped (at annotation latitude and longitude)
       selectedLocation = pins.filter({ $0.coordinate.latitude == view.annotation?.coordinate.latitude && $0.coordinate.longitude == view.annotation?.coordinate.longitude }).first
       performSegue(withIdentifier: "showCollection", sender: self)
    }

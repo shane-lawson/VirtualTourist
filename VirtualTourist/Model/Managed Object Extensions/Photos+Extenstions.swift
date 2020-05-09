@@ -11,6 +11,7 @@ import CoreData
 import UIKit
 
 extension Photo {
+   // create a unique id for each photo so a sort descriptor can be used for an NSFetchedResponseController
    static var currentId: Int64 = 0
    
    class func getUniqueId() -> Int64 {
@@ -20,9 +21,11 @@ extension Photo {
    
    public override func awakeFromInsert() {
       self.id = Photo.getUniqueId()
+      // put placeholder image into photo
       self.imageData = UIImage(systemName: "photo.fill")?.jpegData(compressionQuality: 1.0)
    }
    
+   // construct a UIImage from the stored imageData on get, store UIImage as imageData and track that it's no longer a placeholder image on set
    var image: UIImage {
       get {
          return UIImage(data: self.imageData!)!
