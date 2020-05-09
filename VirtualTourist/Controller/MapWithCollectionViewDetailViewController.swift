@@ -34,9 +34,10 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
       annotation.coordinate = pin.coordinate
       mapView.addAnnotation(annotation)
       mapView.delegate = self
-      
+
       collectionView.dataSource = self
       collectionView.delegate = self
+      setupCollectionViewLayout()
    }
    
    override func viewWillAppear(_ animated: Bool) {
@@ -123,6 +124,19 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
          fetchRequest.fetchOffset = offset
       }
       return fetchRequest
+   }
+   
+   fileprivate func setupCollectionViewLayout() {
+      let spacing: CGFloat = 5
+      let width = UIScreen.main.bounds.width
+      let layout = UICollectionViewFlowLayout()
+      layout.sectionInset = UIEdgeInsets(top: spacing, left: spacing, bottom: 50, right: spacing)
+      let numberOfItems: CGFloat = 3
+      let itemSize = (width - (spacing * (numberOfItems+1))) / numberOfItems
+      layout.itemSize = CGSize(width: itemSize, height: itemSize)
+      layout.minimumInteritemSpacing = spacing
+      layout.minimumLineSpacing = spacing
+      collectionView.collectionViewLayout = layout
    }
    
    // MARK: - NSFetchedResultsControllerDelegate
