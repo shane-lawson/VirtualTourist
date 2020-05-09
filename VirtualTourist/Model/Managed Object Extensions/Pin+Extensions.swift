@@ -23,7 +23,7 @@ extension Pin {
    
    public override func awakeFromInsert() {
       for _ in 0..<30 {
-         self.addToPhotos(Photos(context: self.managedObjectContext!))
+         self.addToPhotos(Photo(context: self.managedObjectContext!))
       }
    }
 }

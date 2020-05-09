@@ -1,5 +1,5 @@
 //
-//  Photos+Extenstions.swift
+//  Photo+Extenstions.swift
 //  VirtualTourist
 //
 //  Created by Shane Lawson on 5/7/20.
@@ -10,7 +10,7 @@ import Foundation
 import CoreData
 import UIKit
 
-extension Photos {
+extension Photo {
    static var currentId: Int64 = 0
    
    class func getUniqueId() -> Int64 {
@@ -19,7 +19,7 @@ extension Photos {
    }
    
    public override func awakeFromInsert() {
-      self.id = Photos.getUniqueId()
+      self.id = Photo.getUniqueId()
       self.imageData = UIImage(systemName: "photo.fill")?.jpegData(compressionQuality: 1.0)
    }
    

@@ -20,7 +20,7 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    var pin: Pin!
    
    var dataController: DataController!
-   var fetchedResultsController: NSFetchedResultsController<Photos>!
+   var fetchedResultsController: NSFetchedResultsController<Photo>!
    
    override func viewDidLoad() {
       super.viewDidLoad()
@@ -53,7 +53,7 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    @IBAction func newCollectionTapped(_ sender: UIBarButtonItem) {
       pin.removeFromPhotos(pin.photos!)
       for _ in 0..<30 {
-         let photo = Photos(context: dataController.viewContext)
+         let photo = Photo(context: dataController.viewContext)
          pin.addToPhotos(photo)
       }
       try? dataController.viewContext.save()
@@ -84,7 +84,7 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
             if photos.count == 30 {
                photos.first(where: {$0.isPlaceholderImage})?.image = image
             } else {
-               let newPhoto = Photos(context: dataController.viewContext)
+               let newPhoto = Photo(context: dataController.viewContext)
                newPhoto.image = image
                pin.addToPhotos(newPhoto)
             }
@@ -110,12 +110,12 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
       }
    }
    
-   fileprivate func performFetch(offset: Int? = nil) -> [Photos]? {
+   fileprivate func performFetch(offset: Int? = nil) -> [Photo]? {
       return try? dataController.viewContext.fetch(createFetchRequest(offset))
    }
    
-   fileprivate func createFetchRequest(_ offset: Int? = nil) -> NSFetchRequest<Photos> {
-      let fetchRequest: NSFetchRequest<Photos> = Photos.fetchRequest()
+   fileprivate func createFetchRequest(_ offset: Int? = nil) -> NSFetchRequest<Photo> {
+      let fetchRequest: NSFetchRequest<Photo> = Photo.fetchRequest()
       let predicate = NSPredicate(format: "pin == %@", pin)
       fetchRequest.predicate = predicate
       let sortDescriptor = NSSortDescriptor(key: "id", ascending: true)
