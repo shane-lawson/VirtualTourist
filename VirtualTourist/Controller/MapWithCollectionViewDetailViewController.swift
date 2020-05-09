@@ -15,6 +15,7 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    @IBOutlet weak var mapView: MKMapView!
    @IBOutlet weak var collectionView: UICollectionView!
    @IBOutlet weak var newCollectionButton: UIBarButtonItem!
+   @IBOutlet weak var noImagesLabel: UILabel!
    
    var pin: Pin!
    
@@ -23,6 +24,8 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    
    override func viewDidLoad() {
       super.viewDidLoad()
+      
+      noImagesLabel.isHidden = true
       
       getPhotos(at: pin.coordinate)
       
@@ -66,6 +69,9 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
          if photoLocations.count < 30 {
             let photos = self.performFetch(offset: photoLocations.count)
             photos?.forEach { self.dataController.viewContext.delete($0) }
+            if photoLocations.count == 0 {
+               self.noImagesLabel.isHidden = false
+            }
          }
       }
    }
