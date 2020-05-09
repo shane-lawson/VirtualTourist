@@ -47,6 +47,12 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    }
    
    @IBAction func newCollectionTapped(_ sender: UIBarButtonItem) {
+      pin.removeFromPhotos(pin.photos!)
+      for _ in 0..<30 {
+         let photo = Photos(context: dataController.viewContext)
+         pin.addToPhotos(photo)
+      }
+      try? dataController.viewContext.save()
       getPhotos(at: pin.coordinate)
    }
    
@@ -68,11 +74,19 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
       guard let data = data else { print(error!); return }
       if let image = UIImage(data: data) {
          if let photos = performFetch() {
-            photos.first(where: {$0.isPlaceholderImage})?.image = image
-            try! dataController.viewContext.save()
+            if photos.count == 30 {
+               photos.first(where: {$0.isPlaceholderImage})?.image = image
+            } else {
+               let newPhoto = Photos(context: dataController.viewContext)
+               newPhoto.image = image
+               pin.addToPhotos(newPhoto)
+            }
+            try? dataController.viewContext.save()
+            if photos.first(where: {$0.isPlaceholderImage}) == nil {
+               setLoadingNewCollection(false)
+            }
          }
       }
-      setLoadingNewCollection(false)
    }
    
    fileprivate func setLoadingNewCollection(_ loading: Bool) {
@@ -90,7 +104,7 @@ class MapWithCollectionViewDetailViewController: UIViewController, NSFetchedResu
    }
    
    fileprivate func performFetch(offset: Int? = nil) -> [Photos]? {
-      return try! dataController.viewContext.fetch(createFetchRequest(offset))
+      return try? dataController.viewContext.fetch(createFetchRequest(offset))
    }
    
    fileprivate func createFetchRequest(_ offset: Int? = nil) -> NSFetchRequest<Photos> {
@@ -168,13 +182,13 @@ extension MapWithCollectionViewDetailViewController: UICollectionViewDelegate {
    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
       let photo = fetchedResultsController.object(at: indexPath)
       dataController.viewContext.delete(photo)
-      let newPhoto = Photos(context: dataController.viewContext)
-      pin.addToPhotos(newPhoto)
-      try! dataController.viewContext.save()
+      try? dataController.viewContext.save()
       
-      // TODO: fix random photo mostly selecting same photo
       FlickrAPI.searchForRandomPhoto(at: (lat: pin.coordinate.latitude, long: pin.coordinate.longitude)) { (photolocation, error) in
-         guard let photolocation = photolocation else {print(error!); return }
+         guard let photolocation = photolocation else {
+            print(error!)
+            return
+         }
          FlickrAPI.downloadPhoto(photolocation, completionHandler: self.handlePhotoDownload(data:error:))
       }
    }

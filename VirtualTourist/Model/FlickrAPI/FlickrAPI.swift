@@ -11,7 +11,7 @@ import Foundation
 class FlickrAPI {
    enum Endpoints {
       case base
-      case search(Double, Double, Int, Int)
+      case search(_ lat: Double, _ long: Double, _ number: Int, _ page: Int)
       case source(PhotoResponse)
       
       var stringValue: String {
@@ -47,8 +47,8 @@ class FlickrAPI {
    }
    
    class func searchForPhotos(at location: (lat: Double, long: Double), completionHandler: @escaping ([PhotoResponse], Error?) -> Void) {
-      // TODO: make random page of photos
-      let request = URLRequest(url: Endpoints.search(location.lat, location.long, 30, 1).url)
+      let randomPage = Int.random(in: 0...135) // the Flickr API stops at 4000 results, and after testing, gives the same photo for any page after 135
+      let request = URLRequest(url: Endpoints.search(location.lat, location.long, 30, randomPage).url)
       URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
          guard let data = data else {
             completionHandler([], error)
@@ -71,36 +71,22 @@ class FlickrAPI {
    }
    
    class func searchForRandomPhoto(at location: (lat: Double, long: Double), completionHandler: @escaping (PhotoResponse?, Error?) -> Void) {
-      let request = URLRequest(url: Endpoints.search(location.lat, location.long, 1, 1).url)
+      let randomPage = Int.random(in: 1...4001) // the Flickr API stops at 4000 results, and after testing, gives the same photo for any page after 4001
+      let request = URLRequest(url: Endpoints.search(location.lat, location.long, 1, randomPage).url)
       URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
          guard let data = data else {
             completionHandler(nil, error)
             return
          }
-         
+
          do {
             let responseObject = try JSONDecoder().decode(PhotosSearchResponse.self, from: data)
-            let randomPage = Int.random(in: 1...responseObject.photos.pages)
-            let request = URLRequest(url: Endpoints.search(location.lat, location.long, 1, randomPage).url)
-            URLSession.shared.dataTask(with: request, completionHandler: { (data, response, error) in
-               guard let data = data else {
-                  completionHandler(nil, error)
-                  return
-               }
-               
-               do {
-                  let responseObject = try JSONDecoder().decode(PhotosSearchResponse.self, from: data)
-                  let photo = responseObject.photos.photo.first!
-                  completionHandler(photo, nil)
-               } catch {
-                  do {
-                     let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
-                     completionHandler(nil, errorResponse)
-                  } catch {
-                     completionHandler(nil, error)
-                  }
-               }
-            }).resume()
+            if let photo = responseObject.photos.photo.first {
+               completionHandler(photo, nil)
+            } else {
+               let errorResponse = ErrorResponse(status: "no photos found", code: 0, message: "no photos found")
+               completionHandler(nil, errorResponse)
+            }
          } catch {
             do {
                let errorResponse = try JSONDecoder().decode(ErrorResponse.self, from: data)
@@ -120,7 +106,7 @@ class FlickrAPI {
             return
          }
          
-         DispatchQueue.main.sync {
+         DispatchQueue.main.async {
             completionHandler(data, nil)
          }
       }).resume()
